@@ -70,16 +70,6 @@
                                 </label>
                             </div>
                             <div class="payment-option">
-                                <input type="radio" name="payment_method" id="bank" value="bank">
-                                <label for="bank" onclick="showPaymentModal('bank')">
-                                    <i class="bi bi-bank"></i>
-                                    <div>
-                                        <strong>Bank Transfer</strong>
-                                        <small class="text-muted d-block">Meezan Bank — 98030114532811</small>
-                                    </div>
-                                </label>
-                            </div>
-                            <div class="payment-option">
                                 <input type="radio" name="payment_method" id="cash" value="cash">
                                 <label for="cash" onclick="showPaymentModal('cash')">
                                     <i class="bi bi-cash"></i>
@@ -179,14 +169,6 @@ const paymentData = {
         instructions: 'Open your bank app → Raast Transfer → Enter 03136232071 → Use Order ID as reference',
         payUrl: 'tel:03136232071',
         icon: 'bi-phone'
-    },
-    bank: {
-        title: 'Meezan Bank Transfer',
-        number: '98030114532811',
-        name: 'BIN SAEED OUTLET',
-        instructions: 'Open Meezan Bank app → Transfer → Enter account 98030114532811 → Use Order ID as reference',
-        payUrl: '',
-        icon: 'bi-bank'
     },
     cash: {
         title: 'Cash on Delivery',

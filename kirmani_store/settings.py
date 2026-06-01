@@ -117,14 +117,6 @@ PAYMENT_METHODS = {
         'name': 'BIN SAEED OUTLET',
         'instructions': 'Send payment via Raast to 03136232071. Use your Order ID as reference.'
     },
-    'bank': {
-        'bank_name': 'Meezan Bank',
-        'account_title': 'BIN SAEED OUTLET',
-        'account_number': '98030114532811',
-        'iban': 'PK36MEZN0098030114532811',
-        'branch': 'Main Branch',
-        'instructions': 'Deposit to Meezan Bank account 98030114532811. Send payment screenshot to our WhatsApp after payment.'
-    },
     'cash': {
         'instructions': 'Pay cash when you receive your order at your doorstep.'
     },
