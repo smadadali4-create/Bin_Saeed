@@ -4,6 +4,7 @@ from django.urls import path, reverse
 from django.shortcuts import redirect
 from django.contrib import messages
 from .models import Order, OrderItem
+from .utils import send_status_update_to_customer
 
 
 class OrderItemInline(admin.TabularInline):
@@ -90,6 +91,7 @@ class OrderAdmin(admin.ModelAdmin):
         order = Order.objects.get(id=order_id)
         order.status = 'confirmed'
         order.save()
+        send_status_update_to_customer(order)
         messages.success(request, f'Order #{order.id} confirmed!')
         return redirect('admin:orders_order_changelist')
 
@@ -97,6 +99,7 @@ class OrderAdmin(admin.ModelAdmin):
         order = Order.objects.get(id=order_id)
         order.status = 'shipped'
         order.save()
+        send_status_update_to_customer(order)
         messages.success(request, f'Order #{order.id} marked as shipped!')
         return redirect('admin:orders_order_changelist')
 
@@ -104,6 +107,7 @@ class OrderAdmin(admin.ModelAdmin):
         order = Order.objects.get(id=order_id)
         order.status = 'delivered'
         order.save()
+        send_status_update_to_customer(order)
         messages.success(request, f'Order #{order.id} delivered!')
         return redirect('admin:orders_order_changelist')
 
@@ -111,25 +115,38 @@ class OrderAdmin(admin.ModelAdmin):
         order = Order.objects.get(id=order_id)
         order.status = 'cancelled'
         order.save()
+        send_status_update_to_customer(order)
         messages.success(request, f'Order #{order.id} cancelled!')
         return redirect('admin:orders_order_changelist')
 
     def confirm_orders(self, request, queryset):
-        updated = queryset.update(status='confirmed')
-        self.message_user(request, f'{updated} order(s) confirmed.')
+        for order in queryset:
+            order.status = 'confirmed'
+            order.save()
+            send_status_update_to_customer(order)
+        self.message_user(request, f'{queryset.count()} order(s) confirmed.')
     confirm_orders.short_description = 'Confirm selected orders'
 
     def mark_shipped(self, request, queryset):
-        updated = queryset.update(status='shipped')
-        self.message_user(request, f'{updated} order(s) marked as shipped.')
+        for order in queryset:
+            order.status = 'shipped'
+            order.save()
+            send_status_update_to_customer(order)
+        self.message_user(request, f'{queryset.count()} order(s) marked as shipped.')
     mark_shipped.short_description = 'Mark selected as shipped'
 
     def mark_delivered(self, request, queryset):
-        updated = queryset.update(status='delivered')
-        self.message_user(request, f'{updated} order(s) marked as delivered.')
+        for order in queryset:
+            order.status = 'delivered'
+            order.save()
+            send_status_update_to_customer(order)
+        self.message_user(request, f'{queryset.count()} order(s) marked as delivered.')
     mark_delivered.short_description = 'Mark selected as delivered'
 
     def cancel_orders(self, request, queryset):
-        updated = queryset.update(status='cancelled')
-        self.message_user(request, f'{updated} order(s) cancelled.')
+        for order in queryset:
+            order.status = 'cancelled'
+            order.save()
+            send_status_update_to_customer(order)
+        self.message_user(request, f'{queryset.count()} order(s) cancelled.')
     cancel_orders.short_description = 'Cancel selected orders'

@@ -8,7 +8,6 @@ class Order(models.Model):
         ('jazzcash', 'JazzCash'),
         ('easypaisa', 'EasyPaisa'),
         ('raast', 'Raast Transfer'),
-        ('bank', 'Bank Transfer'),
         ('cash', 'Cash on Delivery'),
     ]
 

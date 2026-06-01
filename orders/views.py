@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.conf import settings
 from .models import Order, OrderItem
 from cart.models import Cart
+from .utils import send_order_confirmation_to_admin
 
 
 @login_required
@@ -52,6 +53,8 @@ def checkout(request):
                 product.save()
 
         cart.items.all().delete()
+
+        send_order_confirmation_to_admin(order)
 
         if payment_method == 'cash':
             messages.success(request, 'Order placed successfully! Your order will be delivered soon.')

@@ -194,7 +194,7 @@ function showPaymentModal(type) {
         html += `<p class="text-muted small">Account: ${currentPayment.name}</p>`;
     }
     html += `<p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">${currentPayment.instructions}</p>`;
-    html += `<a href="https://wa.me/923136543105?text=${encodeURIComponent('Payment sent for Order ID: ' + (document.querySelector('input[name=\\'full_name\\']')?.value || ''))}" target="_blank" class="btn btn-success btn-sm mt-2"><i class="bi bi-whatsapp"></i> Send Confirmation on WhatsApp</a>`;
+    html += `<a href="https://wa.me/{{ contact_whatsapp }}?text=${encodeURIComponent('Payment sent for Order ID: ' + (document.querySelector('input[name=\\'full_name\\']')?.value || ''))}" target="_blank" class="btn btn-success btn-sm mt-2"><i class="bi bi-whatsapp"></i> Send Confirmation on WhatsApp</a>`;
 
     document.getElementById('paymentModalBody').innerHTML = html;
 
