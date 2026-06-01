@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="card-title mb-0">Order #{{ order.id }}</h4>
-                        <a href="{% url 'orders:order_history' %}" class="btn btn-outline-gold btn-sm">Back to Orders</a>
+                        <a href="{% url 'orders:order_history' %}?phone={{ order.phone }}" class="btn btn-outline-gold btn-sm">Back to Orders</a>
                     </div>
 
                     <div class="row mb-4">
@@ -65,6 +65,7 @@
                             <thead>
                                 <tr>
                                     <th>Product</th>
+                                    <th>Size</th>
                                     <th>Quantity</th>
                                     <th>Price</th>
                                     <th>Total</th>
@@ -74,6 +75,7 @@
                                 {% for item in order.items.all %}
                                 <tr>
                                     <td>{{ item.product.name }}</td>
+                                    <td>{% if item.size %}{{ item.get_size_display }}{% else %}&mdash;{% endif %}</td>
                                     <td>{{ item.quantity }}</td>
                                     <td>Rs. {{ item.price }}</td>
                                     <td>Rs. {{ item.get_cost }}</td>
@@ -82,7 +84,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="3" class="text-end fw-bold">Total:</td>
+                                    <td colspan="4" class="text-end fw-bold">Total:</td>
                                     <td class="fw-bold fs-5">Rs. {{ order.total }}</td>
                                 </tr>
                             </tfoot>

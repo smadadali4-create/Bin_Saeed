@@ -18,6 +18,12 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    SIZE_CHOICES = [
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+    ]
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
@@ -26,6 +32,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/', blank=True)
     stock = models.PositiveIntegerField(default=0)
     available = models.BooleanField(default=True)
+    has_sizes = models.BooleanField(default=False, help_text='Enable size selection (S, M, L)')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

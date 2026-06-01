@@ -1,20 +1,18 @@
-from .models import Cart
+from django.conf import settings
+from products.models import Product
 
 
 def cart_total(request):
-    if request.user.is_authenticated:
+    cart = request.session.get('cart', {})
+    total_items = sum(item['quantity'] for item in cart.values())
+    total_price = 0
+    for product_id, item in cart.items():
         try:
-            cart = Cart.objects.get(user=request.user)
-            return {
-                'cart_total_items': cart.get_total_items(),
-                'cart_total_price': cart.get_total_price(),
-            }
-        except Cart.DoesNotExist:
-            return {
-                'cart_total_items': 0,
-                'cart_total_price': 0,
-            }
+            product = Product.objects.get(id=product_id, available=True)
+            total_price += product.price * item['quantity']
+        except Product.DoesNotExist:
+            pass
     return {
-        'cart_total_items': 0,
-        'cart_total_price': 0,
+        'cart_total_items': total_items,
+        'cart_total_price': total_price,
     }

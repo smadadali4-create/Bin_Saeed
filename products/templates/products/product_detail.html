@@ -46,23 +46,45 @@
                 {% endif %}
             </div>
 
-            <div class="d-grid gap-2 d-md-flex">
-                {% if product.available and product.stock > 0 %}
-                <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-gold btn-lg me-md-2">
-                    <i class="bi bi-cart-plus"></i> Add to Cart
-                </a>
+            {% if product.available and product.stock > 0 %}
+            <form method="POST" action="{% url 'cart:cart_add' product.id %}" class="mb-3">
+                {% csrf_token %}
+                {% if product.has_sizes %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Size:</label>
+                    <div class="size-selector">
+                        {% for value, label in product.SIZE_CHOICES %}
+                        <label class="size-option">
+                            <input type="radio" name="size" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
+                            <span class="size-label">{{ label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
                 {% endif %}
+                <div class="d-grid gap-2 d-md-flex">
+                    <button type="submit" class="btn btn-gold btn-lg me-md-2">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                    <a href="{% url 'products:product_list' %}" class="btn btn-outline-gold btn-lg">
+                        Continue Shopping
+                    </a>
+                </div>
+            </form>
+            {% else %}
+            <div class="d-grid gap-2 d-md-flex">
                 <a href="{% url 'products:product_list' %}" class="btn btn-outline-gold btn-lg">
                     Continue Shopping
                 </a>
             </div>
+            {% endif %}
 
             <div class="payment-info-box mt-4">
                 <h6><i class="bi bi-shield-check"></i> Secure Payment Options</h6>
                 <div class="d-flex flex-wrap gap-2 mt-2">
-                    <span class="badge bg-dark">JazzCash — 03220654138</span>
-                    <span class="badge bg-dark">EasyPaisa — 03356232071</span>
-                    <span class="badge bg-dark">Raast — 03136232071</span>
+                    <span class="badge bg-dark">JazzCash &mdash; 03220654138</span>
+                    <span class="badge bg-dark">EasyPaisa &mdash; 03356232071</span>
+                    <span class="badge bg-dark">Raast &mdash; 03136232071</span>
                     <span class="badge bg-dark">Cash on Delivery</span>
                 </div>
             </div>

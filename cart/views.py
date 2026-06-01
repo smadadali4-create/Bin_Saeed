@@ -1,63 +1,93 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Cart, CartItem
 from products.models import Product
 
 
-@login_required
 def cart_detail(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    return render(request, 'cart/cart_detail.html', {'cart': cart})
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total = 0
+    for key, item_data in cart.items():
+        product = get_object_or_404(Product, id=item_data['product_id'], available=True)
+        item_total = product.price * item_data['quantity']
+        total += item_total
+        cart_items.append({
+            'key': key,
+            'product': product,
+            'quantity': item_data['quantity'],
+            'size': item_data.get('size', 'M'),
+            'total': item_total,
+        })
+    return render(request, 'cart/cart_detail.html', {
+        'cart_items': cart_items,
+        'total': total,
+    })
 
 
-@login_required
 def cart_add(request, product_id):
     product = get_object_or_404(Product, id=product_id, available=True)
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    size = request.POST.get('size', 'M')
 
-    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product)
+    if size not in dict(Product.SIZE_CHOICES):
+        size = 'M'
 
-    if not item_created:
-        if cart_item.quantity < product.stock:
-            cart_item.quantity += 1
-            cart_item.save()
-            messages.success(request, f'Increased {product.name} quantity in cart.')
+    cart = request.session.get('cart', {})
+
+    key = f'{product_id}_{size}'
+
+    if key in cart:
+        if cart[key]['quantity'] < product.stock:
+            cart[key]['quantity'] += 1
+            messages.success(request, f'Increased {product.name} ({size}) quantity.')
         else:
             messages.warning(request, f'Not enough stock for {product.name}.')
     else:
-        cart_item.quantity = 1
-        cart_item.save()
-        messages.success(request, f'{product.name} added to cart.')
+        cart[key] = {
+            'product_id': product_id,
+            'quantity': 1,
+            'size': size,
+        }
+        messages.success(request, f'{product.name} ({size}) added to cart.')
 
+    request.session['cart'] = cart
     return redirect('cart:cart_detail')
 
 
-@login_required
-def cart_remove(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-    product_name = cart_item.product.name
-    cart_item.delete()
-    messages.success(request, f'{product_name} removed from cart.')
+def cart_remove(request, item_key):
+    cart = request.session.get('cart', {})
+    if item_key in cart:
+        del cart[item_key]
+        request.session['cart'] = cart
+        messages.success(request, 'Item removed from cart.')
     return redirect('cart:cart_detail')
 
 
-@login_required
-def cart_update(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+def cart_update(request, item_key):
+    cart = request.session.get('cart', {})
+    if item_key not in cart:
+        return redirect('cart:cart_detail')
+
     quantity = request.POST.get('quantity', 1)
+    size = request.POST.get('size', cart[item_key].get('size', 'M'))
+
+    if size not in dict(Product.SIZE_CHOICES):
+        size = cart[item_key].get('size', 'M')
 
     try:
         quantity = int(quantity)
-        if quantity > 0 and quantity <= cart_item.product.stock:
-            cart_item.quantity = quantity
-            cart_item.save()
+        product = get_object_or_404(Product, id=cart[item_key]['product_id'])
+
+        if quantity > 0 and quantity <= product.stock:
+            cart[item_key]['quantity'] = quantity
+            cart[item_key]['size'] = size
+            request.session['cart'] = cart
             messages.success(request, 'Cart updated.')
         elif quantity <= 0:
-            cart_item.delete()
-            messages.success(request, f'{cart_item.product.name} removed from cart.')
+            del cart[item_key]
+            request.session['cart'] = cart
+            messages.success(request, 'Item removed from cart.')
         else:
-            messages.warning(request, f'Only {cart_item.product.stock} in stock.')
+            messages.warning(request, f'Only {product.stock} in stock.')
     except ValueError:
         messages.error(request, 'Invalid quantity.')
 

@@ -1,19 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from .models import Order, OrderItem
-from cart.models import Cart
+from products.models import Product
 from .utils import send_order_confirmation_to_admin
 
 
-@login_required
 def checkout(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
-
-    if cart.get_total_items() == 0:
+    cart = request.session.get('cart', {})
+    if not cart:
         messages.warning(request, 'Your cart is empty.')
         return redirect('cart:cart_detail')
+
+    cart_items = []
+    total = 0
+    for key, item_data in cart.items():
+        product = get_object_or_404(Product, id=item_data['product_id'], available=True)
+        item_total = product.price * item_data['quantity']
+        total += item_total
+        cart_items.append({
+            'key': key,
+            'product': product,
+            'quantity': item_data['quantity'],
+            'size': item_data.get('size', 'M'),
+            'total': item_total,
+        })
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
@@ -25,34 +36,38 @@ def checkout(request):
         if not all([full_name, phone, address, city, payment_method]):
             messages.error(request, 'Please fill in all fields.')
             return render(request, 'orders/checkout.html', {
-                'cart': cart,
+                'cart_items': cart_items,
+                'total': total,
                 'payment_methods': settings.PAYMENT_METHODS,
             })
 
+        user = request.user if request.user.is_authenticated else None
+
         order = Order.objects.create(
-            user=request.user,
+            user=user,
             full_name=full_name,
             phone=phone,
             address=address,
             city=city,
             payment_method=payment_method,
-            total=cart.get_total_price(),
+            total=total,
         )
 
-        for cart_item in cart.items.all():
+        for key, item_data in cart.items():
+            product = get_object_or_404(Product, id=item_data['product_id'])
             OrderItem.objects.create(
                 order=order,
-                product=cart_item.product,
-                quantity=cart_item.quantity,
-                price=cart_item.product.price,
+                product=product,
+                quantity=item_data['quantity'],
+                price=product.price,
+                size=item_data.get('size', 'M'),
             )
 
-            product = cart_item.product
-            if product.stock >= cart_item.quantity:
-                product.stock -= cart_item.quantity
+            if product.stock >= item_data['quantity']:
+                product.stock -= item_data['quantity']
                 product.save()
 
-        cart.items.all().delete()
+        request.session['cart'] = {}
 
         send_order_confirmation_to_admin(order)
 
@@ -64,14 +79,14 @@ def checkout(request):
             return redirect('orders:order_detail', order_id=order.id)
 
     return render(request, 'orders/checkout.html', {
-        'cart': cart,
+        'cart_items': cart_items,
+        'total': total,
         'payment_methods': settings.PAYMENT_METHODS,
     })
 
 
-@login_required
 def order_confirmation(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order = get_object_or_404(Order, id=order_id)
     payment_info = settings.PAYMENT_METHODS.get(order.payment_method, {})
     payment_whatsapp_text = f'Order #{order.id} - Rs.{order.total} paid via {order.get_payment_method_display()}'
     return render(request, 'orders/order_confirmation.html', {
@@ -81,21 +96,23 @@ def order_confirmation(request, order_id):
     })
 
 
-@login_required
 def order_history(request):
-    orders = Order.objects.filter(user=request.user)
-    return render(request, 'orders/order_history.html', {'orders': orders})
+    phone = request.GET.get('phone', '')
+    orders = []
+    if phone:
+        orders = Order.objects.filter(phone=phone)
+        if not orders:
+            messages.info(request, 'No orders found for this phone number.')
+    return render(request, 'orders/order_history.html', {'orders': orders, 'search_phone': phone})
 
 
-@login_required
 def order_detail(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order = get_object_or_404(Order, id=order_id)
     return render(request, 'orders/order_detail.html', {'order': order})
 
 
-@login_required
 def upload_payment_proof(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order = get_object_or_404(Order, id=order_id)
     if request.method == 'POST' and request.FILES.get('payment_proof'):
         order.payment_proof = request.FILES['payment_proof']
         order.payment_status = 'paid'

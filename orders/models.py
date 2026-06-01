@@ -19,7 +19,7 @@ class Order(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     full_name = models.CharField(max_length=200)
     phone = models.CharField(max_length=20)
     address = models.TextField()
@@ -36,20 +36,28 @@ class Order(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Order #{self.id} - {self.user.username}"
+        return f"Order #{self.id} - {self.full_name}"
 
     def get_total_cost(self):
         return sum(item.get_cost() for item in self.items.all())
 
 
 class OrderItem(models.Model):
+    SIZE_CHOICES = [
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+    ]
+
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    size = models.CharField(max_length=1, choices=SIZE_CHOICES, default='M')
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+        size_display = dict(self.SIZE_CHOICES).get(self.size, self.size)
+        return f"{self.quantity} x {self.product.name} ({size_display})"
 
     def get_cost(self):
         return self.price * self.quantity

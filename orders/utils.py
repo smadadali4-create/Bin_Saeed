@@ -1,6 +1,5 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from django.template.loader import render_to_string
 
 
 def send_order_confirmation_to_admin(order):
@@ -27,7 +26,7 @@ Admin dashboard: https://smadadali4.pythonanywhere.com/admin/orders/order/
 
 
 def send_status_update_to_customer(order):
-    if not order.user.email:
+    if not order.user or not order.user.email:
         return
 
     status_messages = {

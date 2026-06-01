@@ -16,6 +16,9 @@
         <div class="col-md-6 col-lg-5">
             <div class="card auth-card">
                 <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-circle" style="font-size: 4rem; color: var(--primary);"></i>
+                    </div>
                     <form method="POST">
                         {% csrf_token %}
                         {% for field in form %}
@@ -31,10 +34,10 @@
                             <button type="submit" class="btn btn-gold btn-lg">Login</button>
                         </div>
                     </form>
-                    <div class="text-center mt-3">
-                        <p class="mb-0">Don't have an account? <a href="{% url 'accounts:register' %}" class="text-gold">Register</a></p>
-                    </div>
                 </div>
+            </div>
+            <div class="text-center mt-3">
+                <p class="mb-0"><a href="{% url 'products:product_list' %}" class="text-gold">Continue as Guest</a></p>
             </div>
         </div>
     </div>
@@ -43,7 +46,9 @@
 
 {% block extra_head %}
 <style>
-    .auth-card input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #dee2e6; border-radius: 0.375rem; }
-    .auth-card input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25); }
+    .auth-card { background: var(--surface); border: 1px solid rgba(41,128,185,0.15); border-radius: 16px; }
+    .auth-card input { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid rgba(41,128,185,0.2); border-radius: 0.375rem; background: var(--surface-2); color: var(--text-light); }
+    .auth-card input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 0.2rem rgba(41, 128, 185, 0.25); }
+    .auth-card .form-label { color: var(--text-muted); }
 </style>
 {% endblock %}
