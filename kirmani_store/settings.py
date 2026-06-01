@@ -8,7 +8,9 @@ SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-pt+&xe8l40%rp7
 
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost,.onrender.com', cast=Csv())
+ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost,.onrender.com,alii22.pythonanywhere.com', cast=Csv())
+
+CSRF_TRUSTED_ORIGINS = config('DJANGO_CSRF_TRUSTED_ORIGINS', default='https://alii22.pythonanywhere.com', cast=Csv())
 
 INSTALLED_APPS = [
     'django.contrib.admin',
