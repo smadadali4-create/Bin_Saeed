@@ -42,23 +42,17 @@
                     </td>
                     <td>Rs. {{ item.product.price }}</td>
                     <td>
-                        {% if item.product.has_sizes %}
                         <span class="badge size-badge">{{ item.size }}</span>
-                        {% else %}
-                        <span class="text-muted">&mdash;</span>
-                        {% endif %}
                     </td>
                     <td>
                         <form method="POST" action="{% url 'cart:cart_update' item.key %}" class="d-flex align-items-center">
                             {% csrf_token %}
                             <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="form-control form-control-sm quantity-input" style="width: 70px;">
-                            {% if item.product.has_sizes %}
                             <select name="size" class="form-select form-select-sm ms-2" style="width: 80px;">
                                 {% for value, label in item.product.SIZE_CHOICES %}
                                 <option value="{{ value }}" {% if item.size == value %}selected{% endif %}>{{ value }}</option>
                                 {% endfor %}
                             </select>
-                            {% endif %}
                             <button type="submit" class="btn btn-sm btn-outline-gold ms-2">
                                 <i class="bi bi-arrow-repeat"></i>
                             </button>

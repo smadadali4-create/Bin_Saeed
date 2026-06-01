@@ -49,7 +49,11 @@
                     <p class="product-price">Rs. {{ product.price }}</p>
                     <div class="product-actions">
                         {% if product.available and product.stock > 0 %}
-                        <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-gold btn-sm">Add to Cart</a>
+                        <form method="POST" action="{% url 'cart:cart_add' product.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="size" value="M">
+                            <button type="submit" class="btn btn-gold btn-sm">Add to Cart</button>
+                        </form>
                         {% endif %}
                         <a href="{{ product.get_absolute_url }}" class="btn btn-outline-gold btn-sm">Details</a>
                     </div>

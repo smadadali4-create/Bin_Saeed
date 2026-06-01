@@ -28,7 +28,6 @@ def add_product(request):
         description = request.POST.get('description')
         image = request.FILES.get('image')
         available = request.POST.get('available') == 'on'
-        has_sizes = request.POST.get('has_sizes') == 'on'
 
         if not name:
             messages.error(request, 'Product name is required.')
@@ -53,7 +52,6 @@ def add_product(request):
                 description=description or '',
                 image=image,
                 available=available,
-                has_sizes=has_sizes,
             )
             messages.success(request, f'Product "{name}" posted successfully!')
             return redirect('admin_add_product')

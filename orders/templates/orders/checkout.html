@@ -98,8 +98,7 @@
                         <div>
                             <h6 class="mb-0">{{ item.product.name }}</h6>
                             <small class="text-muted">
-                                Qty: {{ item.quantity }}
-                                {% if item.product.has_sizes %} | Size: {{ item.size }}{% endif %}
+                                Qty: {{ item.quantity }} | Size: {{ item.size }}
                             </small>
                         </div>
                         <span>Rs. {{ item.total }}</span>
