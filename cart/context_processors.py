@@ -6,9 +6,9 @@ def cart_total(request):
     cart = request.session.get('cart', {})
     total_items = sum(item['quantity'] for item in cart.values())
     total_price = 0
-    for product_id, item in cart.items():
+    for key, item in cart.items():
         try:
-            product = Product.objects.get(id=product_id, available=True)
+            product = Product.objects.get(id=item['product_id'], available=True)
             total_price += product.price * item['quantity']
         except Product.DoesNotExist:
             pass
