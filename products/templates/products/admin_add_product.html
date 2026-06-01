@@ -151,13 +151,23 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Product Image</label>
+                    <label class="form-label">Main Product Image</label>
                     <div class="preview-box" id="imagePreview" onclick="document.getElementById('imageInput').click()">
                         <i class="bi bi-image"></i>
-                        <p style="color: #a0a0b0; margin: 0;">Click to upload product image</p>
+                        <p style="color: #a0a0b0; margin: 0;">Click to upload main product image</p>
                         <img id="previewImg" src="#" alt="Preview">
                     </div>
                     <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Additional Images <small style="color: #666;">(you can select multiple)</small></label>
+                    <div class="preview-box" id="multiImagePreview" onclick="document.getElementById('multiImageInput').click()">
+                        <i class="bi bi-images"></i>
+                        <p style="color: #a0a0b0; margin: 0;">Click to upload additional images</p>
+                        <div id="multiPreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+                    <input type="file" name="images" id="multiImageInput" accept="image/*" style="display: none;" multiple onchange="previewMultipleImages(event)">
                 </div>
 
                 <div class="d-flex gap-3">
@@ -182,6 +192,30 @@
                 document.querySelector('#imagePreview p').style.display = 'none';
             };
             reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function previewMultipleImages(event) {
+            const container = document.getElementById('multiPreviewContainer');
+            container.innerHTML = '';
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '8px';
+                    img.style.border = '2px solid rgba(212, 175, 55, 0.3)';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(files[i]);
+            }
+            if (files.length > 0) {
+                document.querySelector('#multiImagePreview i').style.display = 'none';
+                document.querySelector('#multiImagePreview p').textContent = files.length + ' image(s) selected';
+            }
         }
     </script>
 </body>

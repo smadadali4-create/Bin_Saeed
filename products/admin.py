@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
-from .models import Category, Product
+from .models import Category, Product, ProductImage
 
 
 @admin.register(Category)
@@ -15,8 +15,22 @@ class CategoryAdmin(admin.ModelAdmin):
     product_count.short_description = 'Products'
 
 
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 3
+    fields = ['image', 'image_preview']
+    readonly_fields = ['image_preview']
+
+    def image_preview(self, obj):
+        if obj.id and obj.image:
+            return format_html('<img src="{}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px;" />', obj.image.url)
+        return mark_safe('<span style="color: #666;">No Image</span>')
+    image_preview.short_description = 'Preview'
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    inlines = [ProductImageInline]
     list_display = ['image_preview', 'name', 'category', 'price', 'stock', 'available', 'created_at']
     list_filter = ['available', 'category', 'created_at', 'updated_at']
     list_editable = ['price', 'stock', 'available']

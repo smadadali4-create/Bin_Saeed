@@ -18,13 +18,42 @@
 
     <div class="row">
         <div class="col-md-6 mb-4">
-            <div class="product-detail-image">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded">
-                {% else %}
-                <img src="https://placehold.co/500x500/e2e8f0/1e293b?text={{ product.name|urlencode }}" alt="{{ product.name }}" class="img-fluid rounded">
+            {% with images=product.images.all %}
+            {% if product.image or images %}
+            <div id="productGallery" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner rounded">
+                    {% if product.image %}
+                    <div class="carousel-item active">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="d-block w-100" style="object-fit: cover; border-radius: 12px;">
+                    </div>
+                    {% endif %}
+                    {% for img in images %}
+                    <div class="carousel-item {% if not product.image and forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" alt="{{ product.name }}" class="d-block w-100" style="object-fit: cover; border-radius: 12px;">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if product.image and images.count > 0 or images.count > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#productGallery" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productGallery" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+                <div class="carousel-indicators">
+                    {% if product.image %}
+                    <button type="button" data-bs-target="#productGallery" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                    {% endif %}
+                    {% for img in images %}
+                    <button type="button" data-bs-target="#productGallery" data-bs-slide-to="{% if product.image %}{{ forloop.counter }}{% else %}{{ forloop.counter0 }}{% endif %}" {% if not product.image and forloop.first %}class="active" aria-current="true"{% endif %}></button>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
+            {% else %}
+            <img src="https://placehold.co/500x500/e2e8f0/1e293b?text={{ product.name|urlencode }}" alt="{{ product.name }}" class="img-fluid rounded">
+            {% endif %}
+            {% endwith %}
         </div>
         <div class="col-md-6">
             <h1 class="product-detail-title">{{ product.name }}</h1>

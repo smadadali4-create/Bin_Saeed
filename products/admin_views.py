@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.utils.text import slugify
-from .models import Category, Product
+from .models import Category, Product, ProductImage
 
 
 @staff_member_required
@@ -27,6 +27,7 @@ def add_product(request):
         stock = request.POST.get('stock')
         description = request.POST.get('description')
         image = request.FILES.get('image')
+        images = request.FILES.getlist('images')
         available = request.POST.get('available') == 'on'
 
         if not name:
@@ -53,6 +54,10 @@ def add_product(request):
                 image=image,
                 available=available,
             )
+
+            for img in images:
+                ProductImage.objects.create(product=product, image=img)
+
             messages.success(request, f'Product "{name}" posted successfully!')
             return redirect('admin_add_product')
 
