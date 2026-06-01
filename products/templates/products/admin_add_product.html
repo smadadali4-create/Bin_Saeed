@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - BIN SAEED OUTLET</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #0a0a0f; color: #F0F0F0; min-height: 100vh; }
+        .admin-header { background: #0a0a0f; border-bottom: 2px solid #D4AF37; padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .admin-header h1 { font-family: 'Playfair Display', serif; color: #D4AF37; font-size: 1.5rem; margin: 0; letter-spacing: 2px; }
+        .admin-header a { color: #D4AF37; text-decoration: none; }
+        .admin-header .nav-links a { color: #999; margin-left: 1.5rem; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .admin-header .nav-links a:hover { color: #D4AF37; }
+        .page-title { font-family: 'Playfair Display', serif; color: #D4AF37; font-size: 2rem; margin: 2rem 0 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .form-card { background: #1a1520; border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 16px; padding: 2rem; max-width: 800px; margin: 0 auto; }
+        .form-card .form-label { color: #999; font-weight: 500; font-size: 0.9rem; }
+        .form-card .form-control, .form-card .form-select { background: #2a2530; border: 1px solid rgba(212, 175, 55, 0.2); color: #F0F0F0; padding: 0.75rem 1rem; border-radius: 10px; }
+        .form-card .form-control:focus, .form-card .form-select:focus { border-color: #D4AF37; box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.15); }
+        .form-card .form-control::placeholder { color: #666; }
+        .form-card textarea { min-height: 120px; }
+        .btn-gold { background: linear-gradient(135deg, #D4AF37, #B8960F); color: #0a0a0f; border: none; font-weight: 700; padding: 0.8rem 2rem; border-radius: 10px; font-size: 1rem; transition: all 0.3s; }
+        .btn-gold:hover { background: linear-gradient(135deg, #F0D060, #D4AF37); color: #0a0a0f; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+        .btn-outline-gold { background: transparent; color: #D4AF37; border: 2px solid #D4AF37; font-weight: 600; padding: 0.8rem 2rem; border-radius: 10px; transition: all 0.3s; }
+        .btn-outline-gold:hover { background: #D4AF37; color: #0a0a0f; }
+        .form-check-input:checked { background-color: #D4AF37; border-color: #D4AF37; }
+        .alert { border-radius: 10px; }
+        .alert-success { background: rgba(40, 167, 69, 0.15); border: 1px solid rgba(40, 167, 69, 0.3); color: #75e08f; }
+        .alert-error { background: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.3); color: #f08080; }
+        .preview-box { background: #2a2530; border: 2px dashed rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .preview-box:hover { border-color: #D4AF37; background: rgba(212, 175, 55, 0.05); }
+        .preview-box img { max-width: 100%; max-height: 200px; border-radius: 8px; display: none; }
+        .preview-box i { font-size: 3rem; color: #D4AF37; display: block; margin-bottom: 0.5rem; }
+        .quick-links { display: flex; gap: 1rem; justify-content: center; margin: 1.5rem 0 2rem; flex-wrap: wrap; }
+        .quick-link-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.5rem; background: #1a1520; border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 12px; color: #F0F0F0; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+        .quick-link-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: #D4AF37; color: #D4AF37; transform: translateY(-2px); }
+        .quick-link-btn i { font-size: 1.3rem; color: #D4AF37; }
+        .quick-link-btn.active { border-color: #D4AF37; background: rgba(212, 175, 55, 0.1); }
+        .category-section { background: #1a1520; border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .category-section label { color: #999; font-weight: 500; }
+        .category-section input { background: #2a2530; border: 1px solid rgba(212, 175, 55, 0.2); color: #F0F0F0; padding: 0.5rem 1rem; border-radius: 8px; flex: 1; min-width: 150px; }
+        .category-section input:focus { border-color: #D4AF37; outline: none; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1><a href="/admin/dashboard/">BIN SAEED OUTLET</a></h1>
+            <div class="nav-links">
+                <a href="/admin/dashboard/"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="/admin/"><i class="bi bi-gear"></i> Admin</a>
+                <a href="/"><i class="bi bi-shop"></i> View Store</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: invert(1);"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <h2 class="page-title"><i class="bi bi-plus-circle"></i> Add New Product</h2>
+
+        <div class="quick-links">
+            <a href="/admin/add-product/" class="quick-link-btn active">
+                <i class="bi bi-plus-circle"></i> Add Product
+            </a>
+            <a href="/admin/products/category/add/" class="quick-link-btn">
+                <i class="bi bi-folder-plus"></i> Add Category
+            </a>
+            <a href="/admin/products/product/" class="quick-link-btn">
+                <i class="bi bi-list-ul"></i> All Products
+            </a>
+            <a href="/admin/orders/order/" class="quick-link-btn">
+                <i class="bi bi-truck"></i> Orders
+            </a>
+        </div>
+
+        <div class="category-section">
+            <label><i class="bi bi-folder-plus"></i> Need a new category?</label>
+            <form method="POST" style="display: flex; gap: 0.5rem; flex: 1; flex-wrap: wrap;">
+                {% csrf_token %}
+                <input type="text" name="new_category" placeholder="Enter category name" required>
+                <button type="submit" class="btn btn-gold" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;">
+                    <i class="bi bi-plus-lg"></i> Create Category
+                </button>
+            </form>
+        </div>
+
+        <div class="form-card">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label">Product Name *</label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter product name" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Category *</label>
+                            <select name="category" class="form-select" required>
+                                <option value="">Select category</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                {% empty %}
+                                <option value="" disabled>No categories yet. Add one first.</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Price (Rs.) *</label>
+                            <input type="number" name="price" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Stock Quantity</label>
+                            <input type="number" name="stock" class="form-control" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Available</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="available" id="available" checked style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                                <label class="form-check-label" for="available" style="color: #a0a0b0;">Available for sale</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" placeholder="Enter product description..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Product Image</label>
+                    <div class="preview-box" id="imagePreview" onclick="document.getElementById('imageInput').click()">
+                        <i class="bi bi-image"></i>
+                        <p style="color: #a0a0b0; margin: 0;">Click to upload product image</p>
+                        <img id="previewImg" src="#" alt="Preview">
+                    </div>
+                    <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-gold btn-lg flex-fill">
+                        <i class="bi bi-cloud-upload"></i> Upload Product
+                    </button>
+                    <a href="/admin/dashboard/" class="btn btn-outline-gold btn-lg">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('previewImg');
+                output.src = reader.result;
+                output.style.display = 'block';
+                document.querySelector('#imagePreview i').style.display = 'none';
+                document.querySelector('#imagePreview p').style.display = 'none';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>

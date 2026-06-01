@@ -1,0 +1,293 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f !important; color: #f8f9fa !important; font-family: 'Poppins', sans-serif; }
+    #header { background: #0a0a0f !important; border-bottom: 2px solid #D4AF37 !important; }
+    #branding h1, #branding h1 a { font-family: 'Playfair Display', serif !important; color: #D4AF37 !important; font-weight: 800 !important; letter-spacing: 2px !important; }
+    .breadcrumbs { display: none; }
+    #content { padding: 20px !important; }
+    #content h1 { font-family: 'Playfair Display', serif; color: #D4AF37; font-size: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 1rem; }
+    .module { background: transparent !important; border: none !important; }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: #1a1520;
+        border: 1px solid rgba(212, 175, 55, 0.15);
+        border-radius: 16px;
+        padding: 1.8rem 1.5rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        border-color: #D4AF37;
+        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.1);
+    }
+
+    .stat-card .stat-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .stat-card .stat-number {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #D4AF37;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .stat-card .stat-label {
+        color: #a0a0b0;
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    .admin-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .admin-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem 2rem;
+        border-radius: 14px;
+        color: #f8f9fa;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05rem;
+        transition: all 0.3s;
+    }
+
+    .admin-action-btn:hover {
+        transform: translateY(-3px);
+        color: #f8f9fa;
+    }
+
+    .admin-action-btn .action-icon {
+        font-size: 1.8rem;
+    }
+
+    .btn-add-product {
+        background: linear-gradient(135deg, #D4AF37, #B8960F);
+        border: none;
+        font-size: 1.2rem;
+        padding: 2rem;
+    }
+
+    .btn-add-product:hover {
+        box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-add-product .action-subtext {
+        font-size: 0.85rem;
+        font-weight: 400;
+        opacity: 0.8;
+        display: block;
+    }
+
+    .dashboard-section {
+        background: #1a1520;
+        border: 1px solid rgba(212, 175, 55, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-section h2 {
+        font-family: 'Playfair Display', serif;
+        color: #D4AF37;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    .order-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+    }
+
+    .order-row:last-child { border-bottom: none; }
+
+    .order-row .order-info a {
+        color: #D4AF37;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .order-row .order-info a:hover { color: #F0D060; }
+
+    .order-row .order-info .order-meta {
+        color: #a0a0b0;
+        font-size: 0.85rem;
+    }
+
+    .badge-status {
+        padding: 0.25rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+    .badge-paid { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+    .badge-shipped { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+    .badge-delivered { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+    .badge-cancelled { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+
+    .low-stock-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+    }
+
+    .low-stock-item:last-child { border-bottom: none; }
+
+    .stock-count {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .view-all-link {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: #D4AF37;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .view-all-link:hover { color: #F0D060; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">BIN SAEED OUTLET Admin</a>
+</h1>
+{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1>Dashboard</h1>
+
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-number">{{ total_products }}</div>
+            <div class="stat-label">Total Products</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-number">{{ total_orders }}</div>
+            <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-number">{{ pending_orders }}</div>
+            <div class="stat-label">Pending Orders</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💳</div>
+            <div class="stat-number">{{ pending_payments }}</div>
+            <div class="stat-label">Pending Payments</div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <a href="{% url 'admin_add_product' %}" class="admin-action-btn btn-add-product" style="display: inline-flex; text-align: left;">
+            <span class="action-icon">📸</span>
+            <div>
+                Upload New Product
+                <span class="action-subtext">Add product name, price, image & description</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="admin-actions">
+        <a href="/admin/products/category/add/" class="admin-action-btn" style="background: #1a1520; border: 1px solid rgba(212, 175, 55, 0.15);">
+            <span class="action-icon">📂</span>
+            Add Category
+        </a>
+        <a href="/admin/products/product/" class="admin-action-btn" style="background: #1a1520; border: 1px solid rgba(212, 175, 55, 0.15);">
+            <span class="action-icon">📦</span>
+            Manage Products
+        </a>
+        <a href="/admin/orders/order/" class="admin-action-btn" style="background: #1a1520; border: 1px solid rgba(212, 175, 55, 0.15);">
+            <span class="action-icon">📋</span>
+            View All Orders
+        </a>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>🔔 Recent Orders</h2>
+        {% if recent_orders %}
+            {% for order in recent_orders %}
+            <div class="order-row">
+                <div class="order-info">
+                    <a href="/admin/orders/order/{{ order.id }}/change/" style="font-size: 1.1rem;">Order #{{ order.id }}</a>
+                    <div class="order-meta">{{ order.full_name }} — {{ order.get_payment_method_display }} — Rs. {{ order.total }}</div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    {% if order.payment_proof %}
+                    <span style="color: #28a745; font-size: 0.8rem;" title="Proof uploaded">📎</span>
+                    {% endif %}
+                    <span class="badge-status 
+                        {% if order.status == 'pending' %}badge-pending
+                        {% elif order.status == 'confirmed' %}badge-paid
+                        {% elif order.status == 'shipped' %}badge-shipped
+                        {% elif order.status == 'delivered' %}badge-delivered
+                        {% elif order.status == 'cancelled' %}badge-cancelled
+                        {% else %}badge-pending{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                    <span style="font-size: 0.8rem; color: #a0a0b0;">{{ order.created_at|date:"M d, h:i A" }}</span>
+                </div>
+            </div>
+            {% endfor %}
+            <a href="/admin/orders/order/" class="view-all-link">View All Orders →</a>
+        {% else %}
+            <p style="color: #a0a0b0; text-align: center; padding: 1rem;">No orders yet.</p>
+        {% endif %}
+    </div>
+
+    {% if low_stock_products %}
+    <div class="dashboard-section">
+        <h2>⚠️ Low Stock Products</h2>
+        {% for product in low_stock_products %}
+        <div class="low-stock-item">
+            <span>
+                <a href="/admin/products/product/{{ product.id }}/change/" style="color: #D4AF37; text-decoration: none; font-weight: 500;">{{ product.name }}</a>
+                <span style="color: #a0a0b0; font-size: 0.85rem;"> — {{ product.category.name|default:"No Category" }}</span>
+            </span>
+            <span class="stock-count">Stock: {{ product.stock }}</span>
+        </div>
+        {% endfor %}
+        <a href="/admin/products/product/" class="view-all-link">Manage Products →</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

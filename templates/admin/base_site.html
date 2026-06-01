@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}BIN SAEED OUTLET Admin{% endblock %}
+
+{% block extrahead %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    #header { background: #0a0a0f; color: #D4AF37; border-bottom: 2px solid #D4AF37; }
+    #branding h1, #branding h1 a {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #D4AF37 !important;
+        letter-spacing: 2px;
+        font-size: 1.5rem;
+    }
+    #branding h1 a:hover { color: #F0D060 !important; }
+    .module h2, .module caption { background: #2a2530; color: #D4AF37; }
+    a.section:link, a.section:visited { color: #D4AF37; }
+    div.breadcrumbs { background: #2a2530; color: #D4AF37; }
+    div.breadcrumbs a { color: #F0D060; }
+    .button, input[type=submit], input[type=button], .submit-row input {
+        background: #D4AF37; color: #0a0a0f; font-weight: 600;
+    }
+    .button:hover, input[type=submit]:hover, input[type=button]:hover { background: #F0D060; }
+    .selector-chosen h2 { background: #D4AF37 !important; color: #0a0a0f !important; }
+    #changelist-filter li.selected a { color: #D4AF37 !important; }
+    #changelist-filter a:hover { color: #F0D060 !important; }
+    .inline-group h2 { background: #2a2530 !important; color: #D4AF37 !important; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">BIN SAEED OUTLET Admin</a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="float: right; padding: 10px 20px; color: #D4AF37;">
+    <a href="/" style="color: #D4AF37; text-decoration: none; font-weight: 500;">View Store</a>
+</div>
+{% endblock %}

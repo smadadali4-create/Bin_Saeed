@@ -1,0 +1,29 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    #content { padding: 20px !important; }
+    .module { background: #1a1520 !important; border: 1px solid rgba(212, 175, 55, 0.1) !important; border-radius: 12px !important; }
+    .module caption { background: #2a2530 !important; color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; font-weight: 700 !important; padding: 12px !important; border-radius: 12px 12px 0 0 !important; }
+    .module a { color: #D4AF37 !important; }
+    .module a:hover { color: #F0D060 !important; }
+    .module td, .module th { border-color: rgba(212, 175, 55, 0.1) !important; color: #F0F0F0 !important; padding: 10px 12px !important; }
+    #content-related { background: transparent !important; }
+    #content-related .module { background: #1a1520 !important; }
+    #content-related h2 { background: #2a2530 !important; color: #D4AF37 !important; font-family: 'Playfair Display', serif !important; }
+    #content-related a { color: #D4AF37 !important; }
+    .dashboard #content { width: auto !important; max-width: 1200px !important; }
+    .dashboard-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #D4AF37; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid rgba(212, 175, 55, 0.2); }
+    .dashboard-button { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #D4AF37, #B8960F); color: #0a0a0f !important; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 1rem; margin-bottom: 1.5rem; transition: all 0.3s; }
+    .dashboard-button:hover { background: linear-gradient(135deg, #F0D060, #D4AF37); transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); color: #0a0a0f !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px; text-align: center;">
+    <a href="{% url 'admin_dashboard' %}" class="dashboard-button">📊 Go to Dashboard</a>
+</div>
+{{ block.super }}
+{% endblock %}

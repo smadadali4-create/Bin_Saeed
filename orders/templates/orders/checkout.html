@@ -1,0 +1,256 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - BIN SAEED OUTLET{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Checkout</h1>
+        <p>Complete your order</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="card checkout-card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Shipping Details</h4>
+                    <form method="POST" id="checkoutForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ user.get_full_name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" placeholder="03XX-XXXXXXX" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">City</label>
+                            <input type="text" name="city" class="form-control" required>
+                        </div>
+
+                        <h4 class="card-title mt-4 mb-3">Payment Method</h4>
+                        <p class="text-muted small">Select a method — click to see payment details</p>
+                        <div class="payment-options">
+                            <div class="payment-option">
+                                <input type="radio" name="payment_method" id="jazzcash" value="jazzcash" required>
+                                <label for="jazzcash" onclick="showPaymentModal('jazzcash')">
+                                    <i class="bi bi-phone"></i>
+                                    <div>
+                                        <strong>JazzCash</strong>
+                                        <small class="text-muted d-block">Send payment via JazzCash</small>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" name="payment_method" id="easypaisa" value="easypaisa">
+                                <label for="easypaisa" onclick="showPaymentModal('easypaisa')">
+                                    <i class="bi bi-phone"></i>
+                                    <div>
+                                        <strong>EasyPaisa</strong>
+                                        <small class="text-muted d-block">Send payment via EasyPaisa</small>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" name="payment_method" id="raast" value="raast">
+                                <label for="raast" onclick="showPaymentModal('raast')">
+                                    <i class="bi bi-phone"></i>
+                                    <div>
+                                        <strong>Raast Transfer</strong>
+                                        <small class="text-muted d-block">Send via Raast to 03136232071</small>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" name="payment_method" id="bank" value="bank">
+                                <label for="bank" onclick="showPaymentModal('bank')">
+                                    <i class="bi bi-bank"></i>
+                                    <div>
+                                        <strong>Bank Transfer</strong>
+                                        <small class="text-muted d-block">Meezan Bank — 98030114532811</small>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" name="payment_method" id="cash" value="cash">
+                                <label for="cash" onclick="showPaymentModal('cash')">
+                                    <i class="bi bi-cash"></i>
+                                    <div>
+                                        <strong>Cash on Delivery</strong>
+                                        <small class="text-muted d-block">Pay when you receive</small>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-gold btn-lg">Place Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 mb-4">
+            <div class="card order-summary-card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Order Summary</h4>
+                    {% for item in cart.items.all %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                            <small class="text-muted">Qty: {{ item.quantity }}</small>
+                        </div>
+                        <span>Rs. {{ item.get_total_price }}</span>
+                    </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Total</h5>
+                        <h5 class="text-gold">Rs. {{ cart.get_total_price }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: #1a1520; border: 1px solid rgba(212,175,55,0.2); border-radius: 16px;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(212,175,55,0.1);">
+                <h5 class="modal-title" style="color: #D4AF37; font-family: 'Playfair Display', serif;" id="paymentModalTitle">Payment Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center" id="paymentModalBody">
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(212,175,55,0.1); justify-content: center;">
+                <button type="button" class="btn btn-gold" id="copyBtn" onclick="copyNumber()">
+                    <i class="bi bi-clipboard"></i> Copy Number
+                </button>
+                <a href="#" id="payLink" target="_blank" class="btn btn-outline-gold">
+                    <i class="bi bi-box-arrow-up-right"></i> Pay Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal-backdrop { background: rgba(0,0,0,0.7); }
+.payment-number { font-size: 1.8rem; font-weight: 800; color: #D4AF37; letter-spacing: 2px; font-family: 'Playfair Display', serif; padding: 1rem; background: rgba(212,175,55,0.05); border-radius: 12px; margin: 1rem 0; border: 1px dashed rgba(212,175,55,0.3); }
+.payment-label { color: #a0a0b0; font-size: 0.9rem; }
+.toast-copy { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #D4AF37; color: #0a0a0f; padding: 0.6rem 1.5rem; border-radius: 30px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast-copy.show { opacity: 1; }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const paymentData = {
+    jazzcash: {
+        title: 'JazzCash',
+        number: '03220654138',
+        name: 'BIN SAEED OUTLET',
+        instructions: 'Open JazzCash app → Send Money → Enter number 03220654138 → Use Order ID as reference',
+        payUrl: 'tel:03220654138',
+        icon: 'bi-phone'
+    },
+    easypaisa: {
+        title: 'EasyPaisa',
+        number: '98030114532811',
+        name: 'BIN SAEED OUTLET',
+        instructions: 'Open EasyPaisa app → Send Money → Enter account 98030114532811 → Use Order ID as reference',
+        payUrl: 'tel:98030114532811',
+        icon: 'bi-phone'
+    },
+    raast: {
+        title: 'Raast Transfer',
+        number: '03136232071',
+        name: 'BIN SAEED OUTLET',
+        instructions: 'Open your bank app → Raast Transfer → Enter 03136232071 → Use Order ID as reference',
+        payUrl: 'tel:03136232071',
+        icon: 'bi-phone'
+    },
+    bank: {
+        title: 'Meezan Bank Transfer',
+        number: '98030114532811',
+        name: 'BIN SAEED OUTLET',
+        instructions: 'Open Meezan Bank app → Transfer → Enter account 98030114532811 → Use Order ID as reference',
+        payUrl: '',
+        icon: 'bi-bank'
+    },
+    cash: {
+        title: 'Cash on Delivery',
+        number: '',
+        name: '',
+        instructions: 'Pay cash when your order arrives at your doorstep. No online payment needed.',
+        payUrl: '',
+        icon: 'bi-cash'
+    }
+};
+
+let currentPayment = null;
+
+function showPaymentModal(type) {
+    currentPayment = paymentData[type];
+    if (!currentPayment) return;
+
+    document.getElementById('paymentModalTitle').textContent = currentPayment.title;
+
+    let html = `<p class="payment-label">Send to this ${currentPayment.title} number</p>`;
+    if (currentPayment.number) {
+        html += `<div class="payment-number" id="paymentNumber">${currentPayment.number}</div>`;
+        html += `<p class="text-muted small">Account: ${currentPayment.name}</p>`;
+    }
+    html += `<p class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">${currentPayment.instructions}</p>`;
+    html += `<a href="https://wa.me/923136543105?text=${encodeURIComponent('Payment sent for Order ID: ' + (document.querySelector('input[name=\\'full_name\\']')?.value || ''))}" target="_blank" class="btn btn-success btn-sm mt-2"><i class="bi bi-whatsapp"></i> Send Confirmation on WhatsApp</a>`;
+
+    document.getElementById('paymentModalBody').innerHTML = html;
+
+    const payLink = document.getElementById('payLink');
+    if (currentPayment.payUrl) {
+        payLink.href = currentPayment.payUrl;
+        payLink.style.display = 'inline-flex';
+    } else {
+        payLink.style.display = 'none';
+    }
+
+    const copyBtn = document.getElementById('copyBtn');
+    if (currentPayment.number) {
+        copyBtn.style.display = 'inline-flex';
+    } else {
+        copyBtn.style.display = 'none';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    modal.show();
+}
+
+function copyNumber() {
+    if (!currentPayment || !currentPayment.number) return;
+    navigator.clipboard.writeText(currentPayment.number).then(() => {
+        const toast = document.getElementById('copyToast') || createToast();
+        toast.textContent = 'Copied: ' + currentPayment.number;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+}
+
+function createToast() {
+    const el = document.createElement('div');
+    el.id = 'copyToast';
+    el.className = 'toast-copy';
+    document.body.appendChild(el);
+    return el;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - BIN SAEED OUTLET{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Contact Us</h1>
+        <div class="gold-divider"></div>
+        <p>We'd love to hear from you</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="contact-info-card">
+                <h3>Get in Touch</h3>
+                <p class="text-muted">Have a question or need help? Reach out to us through any of these channels.</p>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h5>WhatsApp</h5>
+                        <a href="https://wa.me/{{ contact_whatsapp }}" target="_blank" class="contact-link">{{ contact_phone }}</a>
+                        <p class="small text-muted">Quickest response time</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <div>
+                        <h5>Phone</h5>
+                        <a href="tel:{{ contact_phone }}" class="contact-link">{{ contact_phone }}</a>
+                        <p class="small text-muted">Mon-Sat, 10AM - 8PM</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <div>
+                        <h5>Email</h5>
+                        <a href="mailto:{{ contact_email }}" class="contact-link">{{ contact_email }}</a>
+                        <p class="small text-muted">We reply within 24 hours</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <div>
+                        <h5>Location</h5>
+                        <p class="mb-0">Pakistan</p>
+                        <p class="small text-muted">Nationwide delivery</p>
+                    </div>
+                </div>
+
+                <a href="https://wa.me/{{ contact_whatsapp }}" target="_blank" class="btn btn-gold btn-lg mt-3 w-100">
+                    <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="contact-form-card">
+                <h3>Send us a Message</h3>
+                <p class="text-muted">Fill out the form and we'll get back to you.</p>
+                <form method="POST" action="{% url 'core:contact' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" placeholder="03XX-XXXXXXX">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea name="message" class="form-control" rows="5" placeholder="Write your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-gold btn-lg w-100">
+                        <i class="bi bi-send"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

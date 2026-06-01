@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - BIN SAEED OUTLET{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Shop</a></li>
+            {% if product.category %}
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="product-detail-image">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded">
+                {% else %}
+                <img src="https://placehold.co/500x500/e2e8f0/1e293b?text={{ product.name|urlencode }}" alt="{{ product.name }}" class="img-fluid rounded">
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h1 class="product-detail-title">{{ product.name }}</h1>
+            {% if product.category %}
+            <p class="text-muted">Category: {{ product.category.name }}</p>
+            {% endif %}
+            <h2 class="product-detail-price">Rs. {{ product.price }}</h2>
+
+            <div class="product-description my-4">
+                <h5>Description</h5>
+                <p>{{ product.description|default:"No description available." }}</p>
+            </div>
+
+            <div class="product-stock mb-3">
+                {% if product.stock > 0 %}
+                <span class="badge bg-success"><i class="bi bi-check-circle"></i> In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                {% endif %}
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex">
+                {% if product.available and product.stock > 0 %}
+                <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-gold btn-lg me-md-2">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                </a>
+                {% endif %}
+                <a href="{% url 'products:product_list' %}" class="btn btn-outline-gold btn-lg">
+                    Continue Shopping
+                </a>
+            </div>
+
+            <div class="payment-info-box mt-4">
+                <h6><i class="bi bi-shield-check"></i> Secure Payment Options</h6>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <span class="badge bg-dark">JazzCash — 03220654138</span>
+                    <span class="badge bg-dark">EasyPaisa — 98030114532811</span>
+                    <span class="badge bg-dark">Raast — 03136232071</span>
+                    <span class="badge bg-dark">Meezan Bank — 98030114532811</span>
+                    <span class="badge bg-dark">Cash on Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <div class="mt-5">
+        <h3 class="section-title">Related Products</h3>
+        <div class="row g-4 mt-2">
+            {% for related in related_products %}
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <a href="{{ related.get_absolute_url }}">
+                            {% if related.image %}
+                            <img src="{{ related.image.url }}" alt="{{ related.name }}">
+                            {% else %}
+                            <img src="https://placehold.co/300x300/e2e8f0/1e293b?text={{ related.name|urlencode }}" alt="{{ related.name }}">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <h5 class="product-name">{{ related.name }}</h5>
+                        <p class="product-price">Rs. {{ related.price }}</p>
+                        <a href="{{ related.get_absolute_url }}" class="btn btn-outline-gold btn-sm w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

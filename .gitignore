@@ -1,0 +1,14 @@
+*.pyc
+__pycache__/
+*.pyo
+.env
+db.sqlite3
+media/
+staticfiles/
+.vscode/
+.idea/
+*.egg-info/
+dist/
+build/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}My Orders - BIN SAEED OUTLET{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>My Orders</h1>
+        <p>Track your order history</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table order-table">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>#{{ order.id }}</strong></td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>{{ order.items.count }}</td>
+                    <td>Rs. {{ order.total }}</td>
+                    <td>
+                        <span class="badge bg-secondary">{{ order.get_payment_method_display }}</span>
+                        {% if order.payment_status == 'paid' %}
+                        <span class="badge bg-success">Paid</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge {% if order.status == 'delivered' %}bg-success{% elif order.status == 'cancelled' %}bg-danger{% elif order.status == 'shipped' %}bg-info{% else %}bg-warning text-dark{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline-gold">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-box" style="font-size: 5rem; color: var(--gold);"></i>
+        <h3 class="mt-3">No Orders Yet</h3>
+        <p class="text-muted">You haven't placed any orders yet.</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-gold btn-lg mt-3">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
