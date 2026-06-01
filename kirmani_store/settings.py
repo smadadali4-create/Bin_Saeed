@@ -108,9 +108,9 @@ PAYMENT_METHODS = {
         'instructions': 'Send payment to JazzCash number 03220654138. Use your Order ID as reference.'
     },
     'easypaisa': {
-        'number': '98030114532811',
+        'number': '03356232071',
         'name': 'BIN SAEED OUTLET',
-        'instructions': 'Send payment to EasyPaisa account 98030114532811. Use your Order ID as reference.'
+        'instructions': 'Send payment to EasyPaisa account 03356232071. Use your Order ID as reference.'
     },
     'raast': {
         'number': '03136232071',
