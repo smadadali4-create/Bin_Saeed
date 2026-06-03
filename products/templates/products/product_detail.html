@@ -68,11 +68,22 @@
             </div>
 
             <div class="product-stock mb-3">
-                {% if product.stock > 0 %}
-                <span class="badge bg-success"><i class="bi bi-check-circle"></i> In Stock ({{ product.stock }} available)</span>
+                {% with total_stock=product.stock %}
+                {% if total_stock > 0 %}
+                <span class="badge bg-success"><i class="bi bi-check-circle"></i> In Stock ({{ total_stock }} available)</span>
                 {% else %}
                 <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Out of Stock</span>
                 {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="size-stock-info mb-3">
+                {% for sz in product.sizes.all %}
+                <span class="badge {% if sz.stock > 0 %}bg-secondary{% else %}bg-danger{% endif %} me-1">
+                    {{ sz.get_size_display }}: {{ sz.stock }}
+                </span>
+                {% endfor %}
+                <small class="text-muted d-block mt-1">Stock per size</small>
             </div>
 
             {% if product.available and product.stock > 0 %}
@@ -81,10 +92,10 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold">Size:</label>
                     <div class="size-selector">
-                        {% for value, label in product.SIZE_CHOICES %}
-                        <label class="size-option">
-                            <input type="radio" name="size" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
-                            <span class="size-label">{{ label }}</span>
+                        {% for sz in product.sizes.all %}
+                        <label class="size-option {% if sz.stock <= 0 %}disabled{% endif %}">
+                            <input type="radio" name="size" value="{{ sz.size }}" {% if forloop.first %}checked{% endif %} {% if sz.stock <= 0 %}disabled{% endif %}>
+                            <span class="size-label">{{ sz.get_size_display }}</span>
                         </label>
                         {% endfor %}
                     </div>

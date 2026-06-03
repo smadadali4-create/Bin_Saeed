@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, ProductSize
 
 
 @admin.register(Category)
@@ -28,9 +28,15 @@ class ProductImageInline(admin.TabularInline):
     image_preview.short_description = 'Preview'
 
 
+class ProductSizeInline(admin.TabularInline):
+    model = ProductSize
+    extra = 3
+    fields = ['size', 'stock']
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline]
+    inlines = [ProductSizeInline, ProductImageInline]
     list_display = ['image_preview', 'name', 'category', 'price', 'stock', 'available', 'created_at']
     list_filter = ['available', 'category', 'created_at', 'updated_at']
     list_editable = ['price', 'stock', 'available']

@@ -31,7 +31,9 @@ def product_list(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, available=True)
     related_products = Product.objects.filter(category=product.category, available=True).exclude(id=product.id)[:4]
+    size_stock = {s.size: s.stock for s in product.sizes.all()}
     return render(request, 'products/product_detail.html', {
         'product': product,
         'related_products': related_products,
+        'size_stock': size_stock,
     })

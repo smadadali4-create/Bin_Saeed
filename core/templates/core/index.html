@@ -48,21 +48,23 @@
                     <h5 class="product-name"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h5>
                     <p class="product-price">Rs. {{ product.price }}</p>
                     <p class="product-stock-info">
-                        {% if product.stock > 0 %}
-                        <span class="badge bg-success">In Stock ({{ product.stock }})</span>
+                        {% with total_stock=product.stock %}
+                        {% if total_stock > 0 %}
+                        <span class="badge bg-success">In Stock ({{ total_stock }})</span>
                         {% else %}
                         <span class="badge bg-danger">Out of Stock</span>
                         {% endif %}
+                        {% endwith %}
                     </p>
                     <div class="product-actions">
                         {% if product.available and product.stock > 0 %}
                         <form method="POST" action="{% url 'cart:cart_add' product.id %}" style="display:inline;">
                             {% csrf_token %}
                             <div class="size-selector-list mb-2">
-                                {% for value, label in product.SIZE_CHOICES %}
+                                {% for sz in product.sizes.all %}
                                 <label class="size-option-list">
-                                    <input type="radio" name="size" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
-                                    <span class="size-label-list">{{ value }}</span>
+                                    <input type="radio" name="size" value="{{ sz.size }}" {% if forloop.first %}checked{% endif %}>
+                                    <span class="size-label-list">{{ sz.size }}</span>
                                 </label>
                                 {% endfor %}
                             </div>

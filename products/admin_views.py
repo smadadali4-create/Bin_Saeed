@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.utils.text import slugify
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, ProductSize
 
 
 @staff_member_required
@@ -24,11 +24,14 @@ def add_product(request):
         name = request.POST.get('name')
         category_id = request.POST.get('category')
         price = request.POST.get('price')
-        stock = request.POST.get('stock')
         description = request.POST.get('description')
         image = request.FILES.get('image')
         images = request.FILES.getlist('images')
         available = request.POST.get('available') == 'on'
+        stock_s = int(request.POST.get('stock_s', 0))
+        stock_m = int(request.POST.get('stock_m', 0))
+        stock_l = int(request.POST.get('stock_l', 0))
+        total_stock = stock_s + stock_m + stock_l
 
         if not name:
             messages.error(request, 'Product name is required.')
@@ -49,11 +52,15 @@ def add_product(request):
                 slug=slug,
                 category_id=category_id,
                 price=price,
-                stock=int(stock) if stock else 0,
+                stock=total_stock,
                 description=description or '',
                 image=image,
                 available=available,
             )
+
+            ProductSize.objects.create(product=product, size='S', stock=stock_s)
+            ProductSize.objects.create(product=product, size='M', stock=stock_m)
+            ProductSize.objects.create(product=product, size='L', stock=stock_l)
 
             for img in images:
                 ProductImage.objects.create(product=product, image=img)

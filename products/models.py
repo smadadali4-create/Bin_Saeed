@@ -45,6 +45,25 @@ class Product(models.Model):
         return reverse('products:product_detail', args=[self.slug])
 
 
+class ProductSize(models.Model):
+    SIZE_CHOICES = [
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+    ]
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='sizes')
+    size = models.CharField(max_length=1, choices=SIZE_CHOICES)
+    stock = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ['product', 'size']
+        ordering = ['size']
+
+    def __str__(self):
+        return f"{self.product.name} - {self.get_size_display()}: {self.stock}"
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='products/')

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
 from .models import Order, OrderItem
-from products.models import Product
+from products.models import Product, ProductSize
 from .utils import send_order_confirmation_to_admin, send_order_confirmation_to_customer, send_status_update_to_customer
 
 
@@ -57,17 +57,23 @@ def checkout(request):
 
         for key, item_data in cart.items():
             product = get_object_or_404(Product, id=item_data['product_id'])
+            size = item_data.get('size', 'M')
             OrderItem.objects.create(
                 order=order,
                 product=product,
                 quantity=item_data['quantity'],
                 price=product.price,
-                size=item_data.get('size', 'M'),
+                size=size,
             )
 
             if product.stock >= item_data['quantity']:
                 product.stock -= item_data['quantity']
                 product.save()
+
+            product_size = ProductSize.objects.filter(product=product, size=size).first()
+            if product_size and product_size.stock >= item_data['quantity']:
+                product_size.stock -= item_data['quantity']
+                product_size.save()
 
         request.session['cart'] = {}
 

@@ -127,13 +127,28 @@
                             <input type="number" name="price" class="form-control" placeholder="0.00" step="0.01" min="0" required>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <div class="mb-3">
-                            <label class="form-label">Stock Quantity</label>
-                            <input type="number" name="stock" class="form-control" placeholder="0" min="0" value="0">
+                            <label class="form-label">Stock per Size</label>
+                            <div class="row">
+                                <div class="col-4">
+                                    <label class="form-label" style="font-size:0.8rem;color:#D4AF37;">Small (S)</label>
+                                    <input type="number" name="stock_s" class="form-control" placeholder="0" min="0" value="0">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label" style="font-size:0.8rem;color:#D4AF37;">Medium (M)</label>
+                                    <input type="number" name="stock_m" class="form-control" placeholder="0" min="0" value="0">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label" style="font-size:0.8rem;color:#D4AF37;">Large (L)</label>
+                                    <input type="number" name="stock_l" class="form-control" placeholder="0" min="0" value="0">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="mb-3">
                             <label class="form-label">Available</label>
                             <div class="form-check form-switch mt-2">
@@ -142,7 +157,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="mb-3">
