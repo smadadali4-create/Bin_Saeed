@@ -20,13 +20,13 @@ class OrderAdmin(admin.ModelAdmin):
     list_display_links = ['id', 'full_name']
     search_fields = ['full_name', 'phone', 'user__username', 'id']
     inlines = [OrderItemInline]
-    readonly_fields = ['total', 'created_at', 'updated_at', 'user', 'full_name', 'phone', 'address', 'city', 'payment_method', 'payment_proof_preview']
+    readonly_fields = ['total', 'created_at', 'updated_at', 'user', 'full_name', 'email', 'phone', 'address', 'city', 'payment_method', 'payment_proof_preview']
     list_per_page = 25
     date_hierarchy = 'created_at'
     actions = ['confirm_orders', 'mark_shipped', 'mark_delivered', 'cancel_orders']
     fieldsets = (
         ('Customer Details', {
-            'fields': ('user', 'full_name', 'phone', 'address', 'city')
+            'fields': ('user', 'full_name', 'email', 'phone', 'address', 'city')
         }),
         ('Payment', {
             'fields': ('payment_method', 'payment_status', 'total', 'payment_proof_preview')

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.conf import settings
 from .models import Order, OrderItem
 from products.models import Product
-from .utils import send_order_confirmation_to_admin
+from .utils import send_order_confirmation_to_admin, send_order_confirmation_to_customer, send_status_update_to_customer
 
 
 def checkout(request):
@@ -28,6 +28,7 @@ def checkout(request):
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
+        email = request.POST.get('email', '')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         city = request.POST.get('city')
@@ -46,6 +47,7 @@ def checkout(request):
         order = Order.objects.create(
             user=user,
             full_name=full_name,
+            email=email,
             phone=phone,
             address=address,
             city=city,
@@ -70,6 +72,7 @@ def checkout(request):
         request.session['cart'] = {}
 
         send_order_confirmation_to_admin(order)
+        send_order_confirmation_to_customer(order)
 
         if payment_method == 'cash':
             messages.success(request, 'Order placed successfully! Your order will be delivered soon.')
@@ -118,6 +121,7 @@ def upload_payment_proof(request, order_id):
         order.payment_status = 'paid'
         order.status = 'confirmed'
         order.save()
+        send_status_update_to_customer(order)
         messages.success(request, '✅ Payment proof received! Order #' + str(order.id) + ' is now CONFIRMED. We will process it shortly.')
         return redirect('orders:order_detail', order_id=order.id)
     return redirect('orders:order_detail', order_id=order.id)

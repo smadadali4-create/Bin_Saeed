@@ -70,11 +70,25 @@
                         <div class="product-info">
                             <h5 class="product-name"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h5>
                             <p class="product-price">Rs. {{ product.price }}</p>
+                            <p class="product-stock-info">
+                                {% if product.stock > 0 %}
+                                <span class="badge bg-success">In Stock ({{ product.stock }})</span>
+                                {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                                {% endif %}
+                            </p>
                             <div class="product-actions">
                                 {% if product.available and product.stock > 0 %}
                                 <form method="POST" action="{% url 'cart:cart_add' product.id %}" style="display:inline;">
                                     {% csrf_token %}
-                                    <input type="hidden" name="size" value="M">
+                                    <div class="size-selector-list mb-2">
+                                        {% for value, label in product.SIZE_CHOICES %}
+                                        <label class="size-option-list">
+                                            <input type="radio" name="size" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
+                                            <span class="size-label-list">{{ value }}</span>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
                                     <button type="submit" class="btn btn-gold btn-sm">Add to Cart</button>
                                 </form>
                                 {% endif %}
@@ -126,4 +140,45 @@
         </div>
     </div>
 </div>
+
+<style>
+.size-selector-list {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+.size-option-list {
+    display: inline-block;
+}
+.size-option-list input {
+    display: none;
+}
+.size-label-list {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.size-option-list input:checked + .size-label-list {
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
+}
+.product-stock-info {
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+.product-stock-info .badge {
+    font-size: 10px;
+    font-weight: 600;
+}
+</style>
 {% endblock %}
